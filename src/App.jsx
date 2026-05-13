@@ -15,7 +15,7 @@ import Home from './features/events/pages/Home';
 import AdminProtected from './features/admin/components/AdminProtected';
 import ScrollToTop from "./features/shared-ui/components/ScrollToTop";
 import { resetBodyScroll } from './utils/dom';
-import { REGISTRATIONS_OPEN } from './config/eventStatus';
+import { REGISTRATIONS_OPEN, SITE_MAINTENANCE_MODE } from './config/eventStatus';
 
 const routePrefetchers = {
   '/about': () => import('./features/events/pages/About'),
@@ -229,6 +229,12 @@ function AppRoutes() {
 function AppShell({ showDecorativeEffects }) {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
+
+  // When maintenance mode is ON, show a permanent loading screen for all public routes.
+  // Admin routes are never affected so you can still manage the site.
+  if (SITE_MAINTENANCE_MODE && !isAdminRoute) {
+    return <AppLoadingScreen />;
+  }
 
   return (
     <>
